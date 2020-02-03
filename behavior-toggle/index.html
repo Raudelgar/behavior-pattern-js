@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<meta charset="UTF-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+		<meta http-equiv="X-UA-Compatible" content="ie=edge" />
+		<title>Behavior Pattern</title>
+
+		<style>
+			form {
+				margin-top: 20px;
+			}
+		</style>
+	</head>
+	<body>
+		<h1>Behavior Toggler</h1>
+		<button
+			id="btn"
+			data-toggle-id="subscribe-mail"
+			title="Click To Show/Hide the Form"
+		>
+			Subscription Form
+		</button>
+
+		<form action="#" id="subscribe-mail" method="post" hidden>
+			<label for="email">Your email:</label>
+			<input type="email" name="email" id="mail" />
+		</form>
+
+		<script>
+			function toggled(elem) {
+				elem.onclick = subscription;
+			}
+
+			function subscription(e) {
+				e.preventDefault();
+				let ids = e.target.dataset.toggleId || false;
+
+				if (ids) {
+					let el = document.getElementById(ids);
+					el.hidden = !el.hidden;
+				}
+			}
+
+			toggled(btn);
+		</script>
+	</body>
+</html>
