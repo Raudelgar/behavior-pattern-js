@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<meta charset="UTF-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+		<meta http-equiv="X-UA-Compatible" content="ie=edge" />
+		<title>Behavior Pattern</title>
+
+		<style>
+			*,
+			*::before,
+			*::after {
+				box-sizing: border-box;
+			}
+			.team {
+				width: 40px;
+				color: #ffff;
+				border-radius: 15%;
+			}
+			#red {
+				background-color: rgb(161, 30, 30);
+			}
+			#blue {
+				background-color: rgb(18, 75, 160);
+			}
+			[vote-result] {
+				position: absolute;
+				display: flex;
+				flex-direction: column;
+				justify-content: center;
+				align-items: center;
+				top: 0;
+				left: 0;
+				width: 100%;
+				height: 100%;
+				background-color: rgba(56, 55, 55, 0.9);
+				z-index: 1;
+				color: #ffff;
+				font-size: 3em;
+			}
+		</style>
+	</head>
+	<body>
+		<h1>Behavior Counter</h1>
+		<div id="counter">
+			<span>Vote Red:</span>
+			<input type="button" value="0" data-counter id="red" class="team" />
+			<span>Vote Blue:</span>
+			<input type="button" value="0" data-counter id="blue" class="team" />
+			<button data-result>Submit Results</button>
+		</div>
+
+		<script>
+			document.getElementById('counter').addEventListener('click', e => {
+				e.preventDefault();
+				if (e.target.dataset.counter != undefined) {
+					e.target.value++;
+					let key = e.target.getAttribute('id');
+					sessionStorage.setItem(key, e.target.value);
+				} else if (e.target.dataset.result != undefined) {
+					const redVal = Number(sessionStorage.getItem('red'));
+					const blueVal = Number(sessionStorage.getItem('blue'));
+					let messages = '';
+
+					//check winner
+					if (redVal > blueVal) {
+						messages = `RED team Win with ${redVal} votes!!`;
+					} else if (redVal < blueVal) {
+						messages = `Blue team Win with ${blueVal} votes!!`;
+					} else {
+						messages = `No winners :(`;
+					}
+
+					const popover = document.createElement('div');
+					popover.setAttribute('vote-result', '');
+					popover.setAttribute('id', 'popover');
+					const content = `<div class="msg">${messages}</div>
+					<button data-element-id="popover">Resume</button>`;
+					popover.innerHTML = content;
+					document.body.appendChild(popover);
+					handlerPopover(popover);
+				}
+			});
+
+			function handlerPopover(elem) {
+				elem.onclick = this.resetCounter;
+			}
+			function resetCounter(e) {
+				e.preventDefault();
+				if (e.target.dataset.elementId === 'popover') {
+					const popEl = document.getElementById(e.target.dataset.elementId);
+					let votes = document.querySelectorAll('[data-counter]');
+
+					//clear
+					for (let vote of votes) {
+						vote.value = 0;
+					}
+
+					sessionStorage.clear();
+					document.body.removeChild(popEl);
+				}
+			}
+		</script>
+	</body>
+</html>
